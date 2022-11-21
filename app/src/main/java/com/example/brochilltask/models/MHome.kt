@@ -16,8 +16,12 @@ import java.util.ArrayList
 class MHome(private val context: Context, private val presenter: PHome) {
     fun getTweets() {
         CoroutineScope(Dispatchers.Main).launch {
-            val resp = ApiManager().getTweets(PreferenceManager(context).getUserToken()!!)
-            presenter?.setTweets(resp as ArrayList<TweetsResponse>)
+            kotlin.runCatching {
+                val resp = ApiManager().getTweets(PreferenceManager(context).getUserToken()!!)
+                presenter?.setTweets(resp as ArrayList<TweetsResponse>)
+            }.onFailure {
+                Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }
